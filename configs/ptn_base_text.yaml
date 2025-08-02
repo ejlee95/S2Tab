@@ -1,0 +1,110 @@
+# Training parameters
+train:
+  lr: 2e-4
+  lr_backbone: 2e-4
+  lr_drop: 70
+  weight_decay: 0.0001
+  epochs: 40
+  T_max: 4
+  T_mult: 1
+  T_up: 50
+  eta_min: 2e-05
+  eta_max: 0.001
+  gamma: 0.5
+  patience: 10
+  clip_max_norm: 35
+  lr_decay: cosineannealingwarm
+  use_amp: false
+  batch_size: 16
+  val_batch_size: 32
+  deterministic: false
+  max_seq_len: 512
+  interpolation: bilinear
+  image_max: 480
+  image_min: 480
+
+test:
+  batch_size: 16
+  max_seq_len: 720
+  apply_as: false
+  interpolation: bilinear
+  image_max: 480
+  image_min: 480
+
+# Model parameters
+model:
+## backbone
+  backbone:
+    backbone_name: convnext_tiny
+    backbone_layer: features.5
+    hidden_dim: 512
+    dropout: 0.2
+
+## Transformer
+  transformer:
+    encoder:
+      enc_layers: 2
+      dim_feedforward: 1024
+      hidden_dim: 512
+      nheads: 8
+      dropout: 0.2
+
+    decoder:
+      dec_layers: 4
+      dim_feedforward: 1024
+      hidden_dim: 512
+      nheads: 8
+      include_header: true
+      dec_pos_emb: sine
+      dropout: 0.1
+
+# Loss parameters
+loss:
+  loss_class_weight: 1.0
+  loss_box_weight: 1.0
+  loss_box_giou_weight: 5.0
+  focal_gamma: 2
+
+# Dataset parameters
+dataset:
+  dataset_file: coco_content
+  dataset_mode: pubtabnet
+  coco_path: "data/input/ptn_coco_512_text"
+  seq_version: content
+  testdir: test
+  gtpath: "eval/PubTabNet_2.0.0.jsonl"
+  loss_eos_token_weight: 0.05
+  fix_batch_image_size: true
+
+# Execution parameters
+exec:
+  eval: false
+  apply_gt_ocr: false
+  device: cuda
+  seed: 42
+  start_epoch: 0
+  num_workers: 4
+  save_step: 10
+  pp: 0
+  draw_attn: false
+  no_eval: false
+  world_size: 1
+  dist_url: "env://"
+  distributed: true
+  dist_backend: nccl
+  log_dir: null
+  resume: ""
+
+vocab:
+  COORD_SHIFT: 7
+  X_BIN: 480
+  Y_BIN: 480
+  BOS: 0
+  EOS: 1
+  FAKE: 2
+  PAD: 3
+  SEP: 4
+  EOH: 5
+  EOT: -1
+  CLASS_OFFSET: 7
+  MAX_CLASS: 39
